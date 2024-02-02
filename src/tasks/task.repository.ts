@@ -1,22 +1,22 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Task } from './task.entity';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { TaskStatus } from './enum/task-status.enum';
 
 @EntityRepository(Task)
-export class TaskRepository extends Repository<Task> {}
+export class TaskRepository extends Repository<Task> {
+  //! Not working here
+  //   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+  //     const { title, description } = createTaskDto;
+  //     const task = new Task();
+  //     task.title = title;
+  //     task.description = description;
+  //     task.status = TaskStatus.OPEN;
+  //     await task.save();
+  //     return task;
+  //   }
+}
 
-// user.repository.ts
-// export const UserRepository = dataSource.getRepository(User).extend({
-//     findByName(firstName: string, lastName: string) {
-//         return this.createQueryBuilder("user")
-//             .where("user.firstName = :firstName", { firstName })
-//             .andWhere("user.lastName = :lastName", { lastName })
-//             .getMany()
-//     },
-// })
+//----------------------------------------------------------------------
 
-// // user.controller.ts
-// export class UserController {
-//     users() {
-//         return UserRepository.findByName("Timber", "Saw")
-//     }
-// }
+// export const TaskRepository = datasource.getRepository(Task);
