@@ -25,7 +25,7 @@ export class User {
   salt: string;
 
   @OneToMany((type) => Task, (task) => task.user, { eager: true })
-  task: Task[];
+  tasks: Task[];
 
   async validatePassword(password: string) {
     const hash = await bcrypt.hash(password, this.salt);
