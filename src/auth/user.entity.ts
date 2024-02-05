@@ -1,5 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Task } from 'src/tasks/task.entity';
 
 @Entity()
 //Checks for duplicate username
@@ -16,6 +23,9 @@ export class User {
 
   @Column()
   salt: string;
+
+  @OneToMany((type) => Task, (task) => task.user, { eager: true })
+  task: Task[];
 
   async validatePassword(password: string) {
     const hash = await bcrypt.hash(password, this.salt);
