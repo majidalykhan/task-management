@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 //Checks for duplicate username
@@ -15,4 +16,9 @@ export class User {
 
   @Column()
   salt: string;
+
+  async validatePassword(password: string) {
+    const hash = await bcrypt.hash(password, this.salt);
+    return hash === this.password;
+  }
 }
