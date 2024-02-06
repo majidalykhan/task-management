@@ -1,0 +1,10 @@
+server:
+  port: 3000
+
+db:
+  type: 'postgres'
+  port: 8000
+  database: nest-taskmanagement
+
+jwt:
+  expiresIn: 3600
