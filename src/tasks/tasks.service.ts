@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskRepository } from './task.repository';
@@ -9,6 +14,7 @@ import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class TasksService {
+  private logger = new Logger();
   constructor(
     @InjectRepository(TaskRepository)
     private tasksRepository: TaskRepository,
@@ -30,8 +36,17 @@ export class TasksService {
         { search: `%${search}%` },
       );
     }
-    const tasks = await query.getMany();
-    return tasks;
+
+    try {
+      const tasks = await query.getMany();
+      return tasks;
+    } catch (error) {
+      this.logger.error(
+        `Failed to get tasks for user "${user.username}". Filters: ${JSON.stringify(filterDto)}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async getTaskById(id: number, user: User): Promise<Task> {
@@ -53,7 +68,17 @@ export class TasksService {
     task.description = description;
     task.status = TaskStatus.OPEN;
     task.user = user;
-    await task.save();
+
+    try {
+      await task.save();
+    } catch (error) {
+      this.logger.error(
+        `Failed to create task for user "${user.username}". Data: ${createTaskDto}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+
     delete task.user;
 
     return task;
